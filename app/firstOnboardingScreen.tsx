@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -16,6 +17,18 @@ import { colors, fontSizes, spacing } from '../styles/theme';
 export default function FirstOnboardingScreen() {
   const router = useRouter();
   const [name, setName] = React.useState('');
+
+  const handleNext = async () => {
+    if (name.trim().length > 0) {
+        try {
+        await AsyncStorage.setItem('userName', name);
+        console.log(`Saved name: ${name}`);
+        router.push('/secondOnboardingScreen');
+        } catch (error) {
+        console.error('Error saving name to AsyncStorage:', error);
+        }
+    }
+}
 
   return (
     // 1. TouchableWithoutFeedback allows clicking outside the input to hide the keyboard
@@ -42,7 +55,7 @@ export default function FirstOnboardingScreen() {
 
             <Pressable 
               style={styles.buttonWrapper} 
-              onPress={() => router.push('/mainScreen')}
+              onPress={handleNext}
             >
               <Text style={styles.nextButton}>Next</Text>
             </Pressable>

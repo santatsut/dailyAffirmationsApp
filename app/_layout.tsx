@@ -27,6 +27,12 @@ export default function RootLayout() {
       {/* Main and Profile will show headers automatically */}
       <Stack.Screen name="mainScreen" />
       <Stack.Screen name="firstOnboardingScreen" />
+      <Stack.Screen name="secondOnboardingScreen" />
+      <Stack.Screen name="thirdOnboardingScreen" />
+      <Stack.Screen name="fourthOnboardingScreen" />
+      <Stack.Screen name="fifthOnboardingScreen" />
+      <Stack.Screen name="sixthOnboardingScreen" />
+      <Stack.Screen name="seventhOnboardingScreen" />
       <Stack.Screen name="profileScreen" />
     </Stack>
   );
