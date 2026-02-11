@@ -4,7 +4,6 @@ import { colors, fonts } from "../styles/theme";
 export default function RootLayout() {
   return (
     <Stack
-    
       screenOptions={{
         // This applies your theme colors to the header of every screen
         headerShown: false,
@@ -15,7 +14,7 @@ export default function RootLayout() {
         headerTintColor: colors.WarmCream,
         headerTitleStyle: {
           fontFamily: fonts.playfair,
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
         contentStyle: {
           backgroundColor: colors.DeepPlum, // Sets background for all screens
@@ -23,16 +22,17 @@ export default function RootLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      
+
       {/* Main and Profile will show headers automatically */}
       <Stack.Screen name="mainScreen" />
-      <Stack.Screen name="firstOnboardingScreen" />
-      <Stack.Screen name="secondOnboardingScreen" />
-      <Stack.Screen name="thirdOnboardingScreen" />
-      <Stack.Screen name="fourthOnboardingScreen" />
-      <Stack.Screen name="fifthOnboardingScreen" />
-      <Stack.Screen name="sixthOnboardingScreen" />
-      <Stack.Screen name="seventhOnboardingScreen" />
+      <Stack.Screen name="nameOnboardingScreen" />
+      <Stack.Screen name="ageOnboardingScreen" />
+      <Stack.Screen name="genderOnboardingScreen" />
+      <Stack.Screen name="benefitsOnboardingScreen" />
+      <Stack.Screen name="dailyOnboardingScreen" />
+      <Stack.Screen name="categoriesOnboardingScreen" />
+      <Stack.Screen name="widgetOnboardingScreen" />
+      <Stack.Screen name="languageOnboardingScreen" />
       <Stack.Screen name="profileScreen" />
     </Stack>
   );
