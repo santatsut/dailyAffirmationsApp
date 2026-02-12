@@ -11,7 +11,7 @@ export default function FifthOnboardingScreen() {
   const currentDay = "Wed"; // This is the day that will "light up"
 
   const handleNext = () => {
-    router.push("/categoriesOnboardingScreen");
+    router.push("./categoriesOnboardingScreen");
   };
 
   return (
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.lg,
     textAlign: "center",
     fontWeight: "bold",
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg * 2,
   },
   subtitleText: {
     color: colors.WarmCream,

@@ -5,47 +5,24 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fonts, fontSizes, spacing } from "../../styles/theme";
 
 const OPTIONS = [
-  { id: "1", label: "Self-love" },
-  { id: "2", label: "relationships" },
-  { id: "3", label: "Motivation" },
-  { id: "4", label: "Confidence" },
-  { id: "5", label: "Peace" },
-  { id: "6", label: "Energy" },
-  { id: "7", label: "Growth" },
-  { id: "8", label: "Overthinking" },
-  { id: "9", label: "Stress Relief" },
-  { id: "10", label: "Philosophy" },
+  { id: "self", label: "Self-Love & Confidence" },
+  { id: "motivation", label: "Motivation & Discipline" },
+  { id: "peace", label: "Calm & Inner Peace" },
+  { id: "focus", label: "Focus & Study" },
+  { id: "relationships", label: "Love & Relationships" },
+  { id: "healing", label: "Healing & Letting Go" },
+  { id: "wisdom", label: "Ancient Wisdom & Philosophy" },
+  { id: "learning", label: "Learn Chengyu & Culture" },
 ];
 
 export default function SixthOnboardingScreen() {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = React.useState([] as string[]);
+  const [selectedOption, setSelectedOption] = React.useState<string[]>([]);
 
   const toggleSelection = (id: string) => {
-    if (
-      selectedOption.includes(
-        OPTIONS.find((option) => option.id === id)?.label || "",
-      )
-    ) {
-      // If already selected, remove it (uncheck)
-      setSelectedOption(
-        selectedOption.filter(
-          (label) =>
-            label !== OPTIONS.find((option) => option.id === id)?.label,
-        ),
-      );
-    } else {
-      // If not selected, add it (check)
-      setSelectedOption((prev) => {
-        const currentLabel =
-          OPTIONS.find((option) => option.id === id)?.label || "";
-        if (prev.includes(currentLabel)) {
-          return prev.filter((label) => label !== currentLabel);
-        } else {
-          return [...prev, currentLabel];
-        }
-      });
-    }
+    setSelectedOption((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
   };
 
   const handleNext = async () => {
@@ -56,7 +33,8 @@ export default function SixthOnboardingScreen() {
           "userOptions",
           JSON.stringify(selectedOption),
         );
-        router.push("/widgetOnboardingScreen");
+
+        router.push("../mainScreen");
       }
     } catch (error) {
       console.error("Error saving options to AsyncStorage:", error);
@@ -64,7 +42,7 @@ export default function SixthOnboardingScreen() {
   };
 
   const renderItem = ({ item }: { item: (typeof OPTIONS)[0] }) => {
-    const isSelected = selectedOption.includes(item.label);
+    const isSelected = selectedOption.includes(item.id);
 
     return (
       <Pressable
@@ -86,17 +64,17 @@ export default function SixthOnboardingScreen() {
       <Text style={styles.title}>
         What kind of affirmations do you want to see?
       </Text>
-      <Text style={styles.subtitle}>This help us tailor your experience!</Text>
+      <Text style={styles.subtitle}>
+        Pick a few — you can change this later.
+      </Text>
       <FlatList
         data={OPTIONS}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        style={{ width: "100%", marginTop: spacing.lg }}
+        style={{ width: "100%", marginTop: spacing.lg, maxHeight: 500 }}
       />
       <Pressable style={styles.button} onPress={handleNext}>
-        <Text onPress={handleNext} style={styles.buttonText}>
-          Next
-        </Text>
+        <Text style={styles.buttonText}>Next</Text>
       </Pressable>
     </View>
   );
@@ -112,7 +90,8 @@ const styles = StyleSheet.create({
   title: {
     color: colors.WarmCream,
     fontSize: fontSizes.lg,
-    marginBottom: 16,
+    marginTop: spacing.lg * 2,
+    marginBottom: spacing.sm,
     textAlign: "center",
     fontWeight: "bold",
   },

@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fonts, fontSizes, spacing } from "../../styles/theme";
 
 export default function FourthOnboardingScreen() {
@@ -16,7 +16,8 @@ export default function FourthOnboardingScreen() {
   const handleNext = async () => {
     try {
       await AsyncStorage.setItem("userLanguage", selectedOption);
-      router.push("/mainScreen");
+      console.log(`Selected language: ${selectedOption}`);
+      router.push("./benefitsOnboardingScreen");
     } catch (error) {
       console.error("Error saving language to AsyncStorage:", error);
     }
@@ -61,7 +62,19 @@ export default function FourthOnboardingScreen() {
       >
         Choose your language
       </Text>
-      <View style={{ flex: 2, width: "100%" }}>
+      <Image
+        style={styles.logo}
+        source={require("../../assets/images/inkFlow.png")}
+        alt="icon"
+      />
+      <View
+        style={{
+          flex: 2,
+          width: "100%",
+          maxHeight: 200,
+          marginTop: spacing.lg,
+        }}
+      >
         {OPTIONS.map((option) => (
           <Pressable
             key={option.id}
@@ -92,7 +105,6 @@ export default function FourthOnboardingScreen() {
           </Pressable>
         ))}
       </View>
-
       <Pressable style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>
       </Pressable>
@@ -104,13 +116,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.DeepPlum,
     padding: spacing.lg,
-    justifyContent: "center",
     alignItems: "center",
   },
   title: {
     color: colors.WarmCream,
     fontSize: fontSizes.lg,
-    marginBottom: 16,
+    marginTop: spacing.lg * 3,
     textAlign: "center",
     fontWeight: "bold",
   },
@@ -120,11 +131,16 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: "center",
   },
+  logo: {
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
+    bottom: 100,
+  },
   checkboxContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
     padding: 16,
     borderRadius: 24,
@@ -158,7 +174,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.WarmCream,
     fontSize: 18,
-    flex: 2,
+    flex: 1,
     textAlign: "center",
   },
   selectedLabel: {

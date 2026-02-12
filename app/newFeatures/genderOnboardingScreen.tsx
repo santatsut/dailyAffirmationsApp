@@ -32,7 +32,7 @@ export default function ThirdOnboardingScreen() {
       console.log(`Selected gender: ${selectedOption}`);
       if (selectedOption) {
         await AsyncStorage.setItem("userGender", selectedOption);
-        router.push("/benefitsOnboardingScreen");
+        router.push("./benefitsOnboardingScreen");
       }
     } catch (error) {
       console.error("Error saving gender to AsyncStorage:", error);

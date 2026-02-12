@@ -14,7 +14,9 @@ export default function Home() {
       {/* Modern way to navigate to /main */}
       <Pressable
         style={styles.button}
-        onPress={() => router.push("./onboardingScreens/nameOnboardingScreen")}
+        onPress={() =>
+          router.push("./onboardingScreens/languageOnboardingScreen")
+        }
       >
         <Text style={styles.buttonText}>Get Started</Text>
       </Pressable>

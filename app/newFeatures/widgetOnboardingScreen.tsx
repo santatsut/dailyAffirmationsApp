@@ -15,7 +15,7 @@ export default function FourthOnboardingScreen() {
       <Text
         style={[
           styles.title,
-          { fontSize: fontSizes.lg, textAlign: "center", flex: 3 },
+          { fontSize: fontSizes.lg, textAlign: "center", flex: 2 },
         ]}
       >
         Add a Widget to your Home Screen
