@@ -1,4 +1,6 @@
-export const chineseAffirmations = {
+import { AffirmationItem, Category } from "./dataTypes";
+
+export const chineseAffirmations: Record<Category, AffirmationItem[]> = {
   selfLove: [
     {
       id: "sl1",

@@ -1,19 +1,12 @@
-import { chineseAffirmations } from "@/data/chineseAffirmations";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
-import { affirmations } from "../data/englishAffirmations";
 import { colors, fontSizes, spacing } from "../styles/theme";
 
-type Category = (typeof categories)[number];
-
-type AffirmationItem = {
-  id: string;
-  hanzi: string;
-  pinyin: string;
-  meaning: string;
-};
+import { chineseAffirmations } from "@/data/chineseAffirmations";
+import { AffirmationItem, Category } from "../data/dataTypes";
+import { affirmations } from "../data/englishAffirmations";
 
 type UserOption =
   | "self"
@@ -54,7 +47,6 @@ export default function MainScreen() {
     null,
   );
 
-  // Step: 0 = show hanzi only, 1 = show pinyin, 2 = show meaning
   const [step, setStep] = React.useState(0);
 
   // Animation values
@@ -64,25 +56,38 @@ export default function MainScreen() {
   const nextAffirmation = () => {
     const isChinese = userLanguage.toLowerCase() === "chinese";
 
-    const effectiveOptions = userOptions.length > 0 ? userOptions : ["self"];
+    const effectiveOptions: UserOption[] =
+      userOptions.length > 0 ? userOptions : ["self"];
+
     const randomUserOption =
       effectiveOptions[Math.floor(Math.random() * effectiveOptions.length)];
-    const mappedCategory = userOptionToCategoryMap[randomUserOption];
+
+    const mappedCategory: Category = userOptionToCategoryMap[randomUserOption];
 
     const list: AffirmationItem[] = isChinese
       ? chineseAffirmations[mappedCategory]
       : affirmations[mappedCategory];
+
+    if (list.length === 0) return;
 
     const randomItem = list[Math.floor(Math.random() * list.length)];
 
     setCategory(mappedCategory);
     setAffirmation(randomItem);
 
-    // Reset step and animations
     setStep(0);
     pinyinAnim.setValue(0);
     meaningAnim.setValue(0);
   };
+
+  React.useEffect(() => {
+    try {
+      AsyncStorage.setItem("hasCompletedOnboarding", "true");
+      console.log("Onboarding completion status set to true");
+    } catch (error) {
+      console.error("Error setting onboarding completion status:", error);
+    }
+  }, []);
 
   React.useEffect(() => {
     const loadOptions = async () => {
@@ -119,6 +124,29 @@ export default function MainScreen() {
     }
   };
 
+  const handleSave = async () => {
+    if (!affirmation) return;
+    try {
+      const savedData = await AsyncStorage.getItem("savedAffirmations");
+      const savedAffirmations: AffirmationItem[] = savedData
+        ? JSON.parse(savedData)
+        : [];
+      const alreadySaved = savedAffirmations.some(
+        (item) => item.id === affirmation.id,
+      );
+      if (!alreadySaved) {
+        const updatedSavedAffirmations = [...savedAffirmations, affirmation];
+        await AsyncStorage.setItem(
+          "savedAffirmations",
+          JSON.stringify(updatedSavedAffirmations),
+        );
+      }
+      console.log("Affirmation saved:", affirmation);
+    } catch (error) {
+      console.error("Error saving affirmation:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.navBar}>
@@ -131,7 +159,6 @@ export default function MainScreen() {
         <Text style={styles.userName}>加油！</Text>
         <Text style={styles.navComponents}>⚙️</Text>
       </View>
-
       <Pressable style={styles.affirmationContainer} onPress={handlePress}>
         {affirmation && (
           <>
@@ -179,7 +206,9 @@ export default function MainScreen() {
       </Pressable>
 
       <View style={styles.lowerRow}>
-        <Text style={styles.Save}>📜</Text>
+        <Text style={styles.Save} onPress={handleSave}>
+          📜
+        </Text>
       </View>
     </View>
   );

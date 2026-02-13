@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -5,6 +6,33 @@ import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
 export default function Home() {
   const router = useRouter();
+  const [setupProcessed, setSetupProcessed] = React.useState(false);
+
+  const handleOnboardingStart = () => {
+    if (setupProcessed) {
+      router.push("./mainScreen");
+    } else {
+      router.push("./onboardingScreen/languageOnboardingScreen");
+    }
+  };
+
+  React.useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      const hasCompletedOnboarding = await AsyncStorage.getItem(
+        "hasCompletedOnboarding",
+      );
+      if (hasCompletedOnboarding === "true") {
+        setSetupProcessed(true);
+      }
+    };
+    checkOnboardingStatus();
+  }, []);
+
+  React.useEffect(() => {
+    if (setupProcessed) {
+      router.push("./mainScreen");
+    }
+  }, [setupProcessed, router]);
 
   return (
     <View style={styles.container}>
@@ -12,12 +40,7 @@ export default function Home() {
       <Text style={styles.subText}>This is the first step to healing!</Text>
 
       {/* Modern way to navigate to /main */}
-      <Pressable
-        style={styles.button}
-        onPress={() =>
-          router.push("./onboardingScreens/languageOnboardingScreen")
-        }
-      >
+      <Pressable style={styles.button} onPress={handleOnboardingStart}>
         <Text style={styles.buttonText}>Get Started</Text>
       </Pressable>
     </View>
