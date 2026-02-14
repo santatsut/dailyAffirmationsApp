@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -7,6 +8,10 @@ import { colors, fontSizes, spacing } from "../styles/theme";
 import { chineseAffirmations } from "@/data/chineseAffirmations";
 import { AffirmationItem, Category } from "../data/dataTypes";
 import { affirmations } from "../data/englishAffirmations";
+
+import Navbar from "../components/ui/navbar";
+
+import GestureRecognizer from "react-native-swipe-gestures";
 
 type UserOption =
   | "self"
@@ -38,9 +43,12 @@ const categories = [
 
 export default function MainScreen() {
   const router = useRouter();
+  const [loaded, setLoaded] = React.useState(false);
 
-  const [userOptions, setUserOptions] = React.useState<UserOption[]>([]);
+  const [userCategories, setuserCategories] = React.useState<UserOption[]>([]);
   const [userLanguage, setUserLanguage] = React.useState("chinese");
+  const [isSaved, setIsSaved] = React.useState(false);
+  const [userStreak, setUserStreak] = React.useState(0);
 
   const [category, setCategory] = React.useState<Category>("selfLove");
   const [affirmation, setAffirmation] = React.useState<AffirmationItem | null>(
@@ -53,11 +61,28 @@ export default function MainScreen() {
   const pinyinAnim = React.useRef(new Animated.Value(0)).current;
   const meaningAnim = React.useRef(new Animated.Value(0)).current;
 
+  const [saving, setSaving] = React.useState(false);
+
+  // for swiping
+  const config = {
+    velocityThreshold: 0.3,
+    directionalOffsetThreshold: 60,
+  };
+
+  const onSwipeUp = () => {
+    console.log("swiped up");
+    nextAffirmation();
+  };
+
   const nextAffirmation = () => {
-    const isChinese = userLanguage.toLowerCase() === "chinese";
+    pinyinAnim.setValue(0);
+    meaningAnim.setValue(0);
+    setStep(0);
+
+    const isChinese = userLanguage.toLowerCase() === "zh";
 
     const effectiveOptions: UserOption[] =
-      userOptions.length > 0 ? userOptions : ["self"];
+      userCategories.length > 0 ? userCategories : ["self"];
 
     const randomUserOption =
       effectiveOptions[Math.floor(Math.random() * effectiveOptions.length)];
@@ -68,16 +93,16 @@ export default function MainScreen() {
       ? chineseAffirmations[mappedCategory]
       : affirmations[mappedCategory];
 
-    if (list.length === 0) return;
+    if (!list || list.length === 0) {
+      const fallback = affirmations.selfLove;
+      setAffirmation(fallback[Math.floor(Math.random() * fallback.length)]);
+      return;
+    }
 
     const randomItem = list[Math.floor(Math.random() * list.length)];
 
     setCategory(mappedCategory);
     setAffirmation(randomItem);
-
-    setStep(0);
-    pinyinAnim.setValue(0);
-    meaningAnim.setValue(0);
   };
 
   React.useEffect(() => {
@@ -90,19 +115,33 @@ export default function MainScreen() {
   }, []);
 
   React.useEffect(() => {
+    const checkIfSaved = async () => {
+      if (!affirmation) return;
+      const savedData = await AsyncStorage.getItem("savedAffirmations");
+      const saved: AffirmationItem[] = savedData ? JSON.parse(savedData) : [];
+      setIsSaved(saved.some((item) => item.id === affirmation.id));
+    };
+
+    checkIfSaved();
+  }, [affirmation]);
+
+  React.useEffect(() => {
     const loadOptions = async () => {
-      const saved = await AsyncStorage.getItem("userOptions");
+      const saved = await AsyncStorage.getItem("userCategories");
       const savedLanguage = await AsyncStorage.getItem("userLanguage");
+
       if (savedLanguage) setUserLanguage(savedLanguage);
-      if (saved) setUserOptions(JSON.parse(saved));
+      if (saved) setuserCategories(JSON.parse(saved));
+
+      setLoaded(true);
     };
 
     loadOptions();
   }, []);
 
   React.useEffect(() => {
-    nextAffirmation();
-  }, [userLanguage]);
+    if (loaded) nextAffirmation();
+  }, [loaded, userLanguage, userCategories]);
 
   const handlePress = () => {
     if (step === 0) {
@@ -124,91 +163,98 @@ export default function MainScreen() {
     }
   };
 
+  const animatedStyle1 = {
+    opacity: pinyinAnim,
+    transform: [
+      {
+        translateY: pinyinAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        }),
+      },
+    ],
+  };
+
+  const animatedStyle2 = {
+    opacity: meaningAnim,
+    transform: [
+      {
+        translateY: meaningAnim.interpolate({
+          inputRange: [0, 1],
+          outputRange: [20, 0],
+        }),
+      },
+    ],
+  };
+
   const handleSave = async () => {
     if (!affirmation) return;
+
     try {
+      // Load existing saved affirmations
       const savedData = await AsyncStorage.getItem("savedAffirmations");
-      const savedAffirmations: AffirmationItem[] = savedData
-        ? JSON.parse(savedData)
-        : [];
-      const alreadySaved = savedAffirmations.some(
-        (item) => item.id === affirmation.id,
-      );
-      if (!alreadySaved) {
-        const updatedSavedAffirmations = [...savedAffirmations, affirmation];
-        await AsyncStorage.setItem(
-          "savedAffirmations",
-          JSON.stringify(updatedSavedAffirmations),
-        );
+      let saved: AffirmationItem[] = savedData ? JSON.parse(savedData) : [];
+
+      const exists = saved.some((item) => item.id === affirmation.id);
+
+      if (exists) {
+        // REMOVE bookmark
+        saved = saved.filter((item) => item.id !== affirmation.id);
+        setIsSaved(false);
+        console.log("Affirmation removed from saved:", affirmation.id);
+      } else {
+        // ADD bookmark
+        saved.push(affirmation);
+        setIsSaved(true);
+        console.log("Affirmation saved:", affirmation.id);
       }
-      console.log("Affirmation saved:", affirmation);
+
+      await AsyncStorage.setItem("savedAffirmations", JSON.stringify(saved));
     } catch (error) {
-      console.error("Error saving affirmation:", error);
+      console.error("Error updating saved affirmations:", error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.navBar}>
-        <Text
-          style={styles.navComponents}
-          onPress={() => router.push("./savedScreen")}
-        >
-          💭
-        </Text>
-        <Text style={styles.userName}>加油！</Text>
-        <Text style={styles.navComponents}>⚙️</Text>
-      </View>
-      <Pressable style={styles.affirmationContainer} onPress={handlePress}>
-        {affirmation && (
-          <>
-            <Text style={styles.affirmationText}>{affirmation.hanzi}</Text>
+      <Navbar />
 
-            <Animated.Text
-              style={[
-                styles.affirmationText,
-                {
-                  opacity: pinyinAnim,
-                  transform: [
-                    {
-                      translateY: pinyinAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              {affirmation.pinyin}
-            </Animated.Text>
+      <GestureRecognizer onSwipeUp={() => onSwipeUp()} config={config}>
+        <Pressable style={styles.affirmationContainer} onPress={handlePress}>
+          {affirmation && (
+            <>
+              <Text
+                style={[
+                  styles.affirmationText,
+                  "text" in affirmation && styles.engText,
+                ]}
+              >
+                {"hanzi" in affirmation ? affirmation.hanzi : affirmation.text}
+              </Text>
 
-            <Animated.Text
-              style={[
-                styles.affirmationText,
-                {
-                  opacity: meaningAnim,
-                  transform: [
-                    {
-                      translateY: meaningAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [20, 0],
-                      }),
-                    },
-                  ],
-                },
-              ]}
-            >
-              {affirmation.meaning}
-            </Animated.Text>
-          </>
-        )}
-      </Pressable>
+              {"pinyin" in affirmation && (
+                <Animated.Text style={[styles.affirmationText, animatedStyle1]}>
+                  {affirmation.pinyin}
+                </Animated.Text>
+              )}
 
+              {"meaning" in affirmation && (
+                <Animated.Text style={[styles.affirmationText, animatedStyle2]}>
+                  {affirmation.meaning}
+                </Animated.Text>
+              )}
+            </>
+          )}
+        </Pressable>
+      </GestureRecognizer>
       <View style={styles.lowerRow}>
-        <Text style={styles.Save} onPress={handleSave}>
-          📜
-        </Text>
+        <Pressable onPress={handleSave} style={styles.Save}>
+          <Ionicons
+            name={isSaved ? "bookmark" : "bookmark-outline"}
+            size={36}
+            color={colors.WarmCream}
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -222,36 +268,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  navBar: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: spacing.lg * 2,
-  },
-  navComponents: {
-    width: 50,
-    height: 50,
-    fontSize: 24,
-  },
-  userName: {
-    color: colors.WarmCream,
-    fontSize: fontSizes.md,
-    textAlign: "center",
-  },
   affirmationContainer: {
-    flex: 1, // takes the remaining space
-    justifyContent: "center", // vertically center the text
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
   },
   affirmationText: {
     color: colors.WarmCream,
-    fontSize: fontSizes.lg,
-    maxWidth: "80%",
+    fontSize: fontSizes.lg * 1.2,
     textAlign: "center",
-    lineHeight: 20, // add some spacing between lines
-    height: 50, // to prevent layout shift when text appears
+    justifyContent: "center",
+    bottom: spacing.lg * 3,
+    lineHeight: 25, // add some spacing between lines
+    height: 75, // to prevent layout shift when text appears
+  },
+  engText: {
+    lineHeight: 40,
   },
   subText: {
     color: colors.SoftCoral,
@@ -265,7 +298,7 @@ const styles = StyleSheet.create({
     bottom: 150,
   },
   Save: {
-    fontSize: fontSizes.lg,
     textAlign: "center",
+    bottom: spacing.lg * 4,
   },
 });

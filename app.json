@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Daily Affirmations",
-    "slug": "Daily-Affirmations",
+    "name": "DailyVerse",
+    "slug": "Daily-Verse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/inkFlow.png",
     "scheme": "dailyaffirmations",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
@@ -20,8 +20,9 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.DailyAffirmations"
+      "package": "com.anonymous.DailyVerse"
     },
+    "platforms": ["android"],
     "web": {
       "output": "static",
       "favicon": "./assets/images/inkFlow.png"
@@ -31,7 +32,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/inkFlow.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -39,7 +40,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

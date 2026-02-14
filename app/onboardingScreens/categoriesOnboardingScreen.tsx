@@ -30,7 +30,7 @@ export default function SixthOnboardingScreen() {
       console.log(`Selected options: ${selectedOption}`);
       if (selectedOption.length > 0) {
         await AsyncStorage.setItem(
-          "userOptions",
+          "userCategories",
           JSON.stringify(selectedOption),
         );
 
