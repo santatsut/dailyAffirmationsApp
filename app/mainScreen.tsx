@@ -11,7 +11,7 @@ import { affirmations } from "../data/englishAffirmations";
 
 import Navbar from "../components/ui/navbar";
 
-import GestureRecognizer from "react-native-swipe-gestures";
+import { PanResponder } from "react-native";
 
 type UserOption =
   | "self"
@@ -46,7 +46,7 @@ export default function MainScreen() {
   const [loaded, setLoaded] = React.useState(false);
 
   const [userCategories, setuserCategories] = React.useState<UserOption[]>([]);
-  const [userLanguage, setUserLanguage] = React.useState("chinese");
+  const [userLanguage, setUserLanguage] = React.useState<string | null>(null);
   const [isSaved, setIsSaved] = React.useState(false);
   const [userStreak, setUserStreak] = React.useState(0);
 
@@ -55,63 +55,98 @@ export default function MainScreen() {
     null,
   );
 
-  const [step, setStep] = React.useState(0);
+  const translateY = React.useRef(new Animated.Value(0)).current;
+  const opacity = React.useRef(new Animated.Value(0)).current;
 
-  // Animation values
-  const pinyinAnim = React.useRef(new Animated.Value(0)).current;
-  const meaningAnim = React.useRef(new Animated.Value(0)).current;
-
-  const [saving, setSaving] = React.useState(false);
-
-  // for swiping
-  const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 60,
-  };
-
-  const onSwipeUp = () => {
-    console.log("swiped up");
-    nextAffirmation();
-  };
-
-  const nextAffirmation = () => {
-    pinyinAnim.setValue(0);
-    meaningAnim.setValue(0);
-    setStep(0);
-
-    const isChinese = userLanguage.toLowerCase() === "zh";
-
-    const effectiveOptions: UserOption[] =
+  const nextAffirmation = React.useCallback(() => {
+    const isChinese = userLanguage === "zh";
+    const effectiveOptions =
       userCategories.length > 0 ? userCategories : ["self"];
-
     const randomUserOption =
       effectiveOptions[Math.floor(Math.random() * effectiveOptions.length)];
-
-    const mappedCategory: Category = userOptionToCategoryMap[randomUserOption];
-
-    const list: AffirmationItem[] = isChinese
+    const mappedCategory = userOptionToCategoryMap[randomUserOption];
+    const list = isChinese
       ? chineseAffirmations[mappedCategory]
       : affirmations[mappedCategory];
 
-    if (!list || list.length === 0) {
-      const fallback = affirmations.selfLove;
-      setAffirmation(fallback[Math.floor(Math.random() * fallback.length)]);
-      return;
+    if (!list || list.length === 0) return;
+
+    let newItem = list[Math.floor(Math.random() * list.length)];
+    while (affirmation && newItem.id === affirmation.id) {
+      newItem = list[Math.floor(Math.random() * list.length)];
     }
 
-    const randomItem = list[Math.floor(Math.random() * list.length)];
+    setAffirmation(newItem);
+  }, [userLanguage, userCategories, affirmation]);
 
-    setCategory(mappedCategory);
-    setAffirmation(randomItem);
-  };
+  const panResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+          Math.abs(gestureState.dy) > 5,
+
+        onPanResponderMove: (_, gestureState) => {
+          if (gestureState.dy < 0) {
+            translateY.setValue(gestureState.dy);
+          }
+        },
+
+        onPanResponderRelease: (_, gestureState) => {
+          const { dy } = gestureState;
+
+          if (dy < -120) {
+            // Animate swipe up
+            Animated.parallel([
+              Animated.timing(translateY, {
+                toValue: -600,
+                duration: 400,
+                useNativeDriver: true,
+              }),
+              Animated.timing(opacity, {
+                toValue: 0, // fade out
+                duration: 400,
+                useNativeDriver: true,
+              }),
+            ]).start(() => {
+              // After swipe up finishes
+              nextAffirmation();
+
+              // Reset position and opacity for new affirmation
+              translateY.setValue(700); // start below screen
+              opacity.setValue(0); // invisible
+
+              // Animate new affirmation in
+              Animated.parallel([
+                Animated.timing(translateY, {
+                  toValue: 0,
+                  duration: 500,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(opacity, {
+                  toValue: 1, // fade in
+                  duration: 750,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+            });
+          }
+        },
+      }),
+    [nextAffirmation],
+  );
 
   React.useEffect(() => {
-    try {
-      AsyncStorage.setItem("hasCompletedOnboarding", "true");
+    const setOnboarding = async () => {
+      const alreadySet = await AsyncStorage.getItem("hasCompletedOnboarding");
+      if (alreadySet === "true") return; // skip if already set
+
+      await AsyncStorage.setItem("hasCompletedOnboarding", "true");
       console.log("Onboarding completion status set to true");
-    } catch (error) {
-      console.error("Error setting onboarding completion status:", error);
-    }
+    };
+
+    setOnboarding();
   }, []);
 
   React.useEffect(() => {
@@ -140,52 +175,10 @@ export default function MainScreen() {
   }, []);
 
   React.useEffect(() => {
-    if (loaded) nextAffirmation();
-  }, [loaded, userLanguage, userCategories]);
-
-  const handlePress = () => {
-    if (step === 0) {
-      setStep(1);
-      Animated.timing(pinyinAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }).start();
-    } else if (step === 1) {
-      setStep(2);
-      Animated.timing(meaningAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      }).start();
-    } else if (step === 2) {
+    if (loaded && userLanguage) {
       nextAffirmation();
     }
-  };
-
-  const animatedStyle1 = {
-    opacity: pinyinAnim,
-    transform: [
-      {
-        translateY: pinyinAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [20, 0],
-        }),
-      },
-    ],
-  };
-
-  const animatedStyle2 = {
-    opacity: meaningAnim,
-    transform: [
-      {
-        translateY: meaningAnim.interpolate({
-          inputRange: [0, 1],
-          outputRange: [20, 0],
-        }),
-      },
-    ],
-  };
+  }, [loaded, userLanguage, userCategories]);
 
   const handleSave = async () => {
     if (!affirmation) return;
@@ -218,11 +211,19 @@ export default function MainScreen() {
   return (
     <View style={styles.container}>
       <Navbar />
-
-      <GestureRecognizer onSwipeUp={() => onSwipeUp()} config={config}>
-        <Pressable style={styles.affirmationContainer} onPress={handlePress}>
+      <View style={styles.content}>
+        <Animated.View
+          {...panResponder.panHandlers}
+          style={[
+            styles.affirmationContainer,
+            {
+              transform: [{ translateY }],
+              opacity: opacity,
+            },
+          ]}
+        >
           {affirmation && (
-            <>
+            <View>
               <Text
                 style={[
                   styles.affirmationText,
@@ -231,28 +232,20 @@ export default function MainScreen() {
               >
                 {"hanzi" in affirmation ? affirmation.hanzi : affirmation.text}
               </Text>
-
-              {"pinyin" in affirmation && (
-                <Animated.Text style={[styles.affirmationText, animatedStyle1]}>
-                  {affirmation.pinyin}
-                </Animated.Text>
-              )}
-
-              {"meaning" in affirmation && (
-                <Animated.Text style={[styles.affirmationText, animatedStyle2]}>
-                  {affirmation.meaning}
-                </Animated.Text>
-              )}
-            </>
+              <Text style={styles.affirmationText}>{affirmation.pinyin}</Text>
+              <Text style={styles.affirmationText}>{affirmation.meaning}</Text>
+            </View>
           )}
-        </Pressable>
-      </GestureRecognizer>
+        </Animated.View>
+      </View>
       <View style={styles.lowerRow}>
-        <Pressable onPress={handleSave} style={styles.Save}>
+        <Text style={{ fontSize: fontSizes.sm, color: "grey" }}>Swipe Up</Text>
+        <Pressable style={styles.Save} onPress={handleSave}>
           <Ionicons
             name={isSaved ? "bookmark" : "bookmark-outline"}
             size={36}
             color={colors.WarmCream}
+            hitSlop={10}
           />
         </Pressable>
       </View>
@@ -264,41 +257,47 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.DeepPlum,
-    padding: spacing.lg,
     justifyContent: "space-between",
     alignItems: "center",
   },
-  affirmationContainer: {
+  content: {
     flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
   },
+
+  affirmationContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: spacing.lg,
+    flex: 1,
+    zIndex: 1000,
+    paddingBottom: spacing.lg * 6,
+  },
+
   affirmationText: {
     color: colors.WarmCream,
     fontSize: fontSizes.lg * 1.2,
     textAlign: "center",
-    justifyContent: "center",
-    bottom: spacing.lg * 3,
-    lineHeight: 25, // add some spacing between lines
-    height: 75, // to prevent layout shift when text appears
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
+    lineHeight: 28,
+    fontFamily: "serif",
   },
+
   engText: {
     lineHeight: 40,
   },
-  subText: {
-    color: colors.SoftCoral,
-    fontSize: fontSizes.sm,
-  },
   lowerRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    position: "absolute",
+    bottom: spacing.lg * 6,
     width: "100%",
-    bottom: 150,
+    alignItems: "center",
+    justifyContent: "center",
   },
+
   Save: {
-    textAlign: "center",
-    bottom: spacing.lg * 4,
+    padding: spacing.md,
   },
 });

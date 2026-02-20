@@ -6,13 +6,19 @@ import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
 export default function Home() {
   const router = useRouter();
-  const [setupProcessed, setSetupProcessed] = React.useState(false);
+  const [setupProcessed, setSetupProcessed] = React.useState<boolean | null>(
+    null,
+  );
 
   const handleOnboardingStart = () => {
+    if (setupProcessed === null) {
+      return null; // or a loading spinner
+    }
+
     if (setupProcessed) {
-      router.push("./mainScreen");
+      router.replace("/mainScreen");
     } else {
-      router.push("./onboardingScreen/languageOnboardingScreen");
+      router.replace("/onboardingScreens/languageOnboardingScreen");
     }
   };
 
@@ -21,26 +27,30 @@ export default function Home() {
       const hasCompletedOnboarding = await AsyncStorage.getItem(
         "hasCompletedOnboarding",
       );
-      if (hasCompletedOnboarding === "true") {
-        setSetupProcessed(true);
-      }
+
+      setSetupProcessed(hasCompletedOnboarding === "true");
     };
+
     checkOnboardingStatus();
   }, []);
 
   React.useEffect(() => {
     if (setupProcessed) {
-      router.push("./mainScreen");
+      router.replace("/mainScreen");
     }
-  }, [setupProcessed, router]);
+  }, [setupProcessed]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.introText}>Daily Affirmations</Text>
+      <Text style={styles.introText}>Daily Verse</Text>
       <Text style={styles.subText}>This is the first step to healing!</Text>
 
       {/* Modern way to navigate to /main */}
-      <Pressable style={styles.button} onPress={handleOnboardingStart}>
+      <Pressable
+        style={styles.button}
+        onPress={handleOnboardingStart}
+        disabled={setupProcessed === null}
+      >
         <Text style={styles.buttonText}>Get Started</Text>
       </Pressable>
     </View>
@@ -88,6 +98,6 @@ const styles = StyleSheet.create({
     color: colors.WarmCream,
     fontFamily: fonts.roboto,
     fontSize: 16,
-    boxShadow: "0 8px 24px rgba(217, 119, 87, 0.4)",
+    elevation: 6,
   },
 });

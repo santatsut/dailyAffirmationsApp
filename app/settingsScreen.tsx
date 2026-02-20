@@ -79,13 +79,13 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       {/* Navbar */}
       <View style={styles.navBar}>
-        <Pressable onPress={() => router.push("./mainScreen")}>
+        <Pressable onPress={() => router.push("/mainScreen")}>
           <Ionicons name="brush" size={28} color="white" />
         </Pressable>
 
         <Text style={styles.title}>Settings</Text>
 
-        <Pressable onPress={() => router.push("./settingsScreen")}>
+        <Pressable onPress={() => router.push("/settingsScreen")}>
           <Ionicons name="book" size={28} color="white" />
         </Pressable>
       </View>

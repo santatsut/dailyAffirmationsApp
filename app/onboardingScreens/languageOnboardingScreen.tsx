@@ -9,34 +9,30 @@ export default function FourthOnboardingScreen() {
   const [selectedOption, setSelectedOption] = React.useState("");
 
   const OPTIONS = [
-    { id: "1", label: "English" },
-    { id: "2", label: "Chinese" },
+    { id: "1", label: "English", language: "en" },
+    { id: "2", label: "Chinese", language: "zh" },
   ];
 
   const handleNext = async () => {
     try {
       await AsyncStorage.setItem("userLanguage", selectedOption);
       console.log(`Selected language: ${selectedOption}`);
-      router.push("./benefitsOnboardingScreen");
+      router.push("/onboardingScreens/benefitsOnboardingScreen");
     } catch (error) {
       console.error("Error saving language to AsyncStorage:", error);
     }
   };
 
-  const toggleSelection = (id: string) => {
-    if (selectedOption === id) {
-      // If already selected, remove it (uncheck)
+  const toggleSelection = (language: string) => {
+    if (selectedOption === language) {
       setSelectedOption("");
     } else {
-      // If not selected, add it (check)
-      setSelectedOption(
-        OPTIONS.find((option) => option.id === id)?.label || "",
-      );
+      setSelectedOption(language);
     }
   };
 
   const renderItem = ({ item }: { item: (typeof OPTIONS)[0] }) => {
-    const isSelected = selectedOption === item.label;
+    const isSelected = selectedOption === item.language;
 
     return (
       <Pressable
@@ -80,14 +76,14 @@ export default function FourthOnboardingScreen() {
             key={option.id}
             style={[
               styles.checkboxContainer,
-              selectedOption === option.label && styles.selectedBox,
+              selectedOption === option.language && styles.selectedBox,
             ]}
-            onPress={() => toggleSelection(option.id)}
+            onPress={() => toggleSelection(option.language)}
           >
             <Text
               style={[
                 styles.label,
-                selectedOption === option.label && styles.selectedLabel,
+                selectedOption === option.language && styles.selectedLabel,
               ]}
             >
               {option.label}
@@ -95,10 +91,10 @@ export default function FourthOnboardingScreen() {
             <View
               style={[
                 styles.checkbox,
-                selectedOption === option.label && styles.checkboxChecked,
+                selectedOption === option.language && styles.checkboxChecked,
               ]}
             >
-              {selectedOption === option.label && (
+              {selectedOption === option.language && (
                 <Text style={styles.checkmark}>✓</Text>
               )}
             </View>

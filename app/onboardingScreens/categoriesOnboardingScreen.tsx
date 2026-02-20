@@ -34,7 +34,7 @@ export default function SixthOnboardingScreen() {
           JSON.stringify(selectedOption),
         );
 
-        router.push("../mainScreen");
+        router.push("/mainScreen");
       }
     } catch (error) {
       console.error("Error saving options to AsyncStorage:", error);

@@ -11,7 +11,7 @@ export default function FifthOnboardingScreen() {
   const currentDay = "Wed"; // This is the day that will "light up"
 
   const handleNext = () => {
-    router.push("./categoriesOnboardingScreen");
+    router.push("/onboardingScreens/categoriesOnboardingScreen");
   };
 
   return (

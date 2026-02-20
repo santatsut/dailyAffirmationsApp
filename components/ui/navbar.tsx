@@ -23,9 +23,9 @@ export const Navbar = () => {
     <View style={styles.navBar}>
       {/* Left: Saved */}
       <Pressable
-        onPress={() => router.push("./savedScreen")}
+        onPress={() => router.push("/savedScreen")}
         style={styles.icon}
-        hitSlop={10}
+        hitSlop={15}
       >
         <Ionicons name="book" size={28} color="white" />
       </Pressable>
@@ -42,9 +42,9 @@ export const Navbar = () => {
 
       {/* Right: Settings */}
       <Pressable
-        onPress={() => router.push("./settingsScreen")}
+        onPress={() => router.push("/settingsScreen")}
         style={styles.icon}
-        hitSlop={10}
+        hitSlop={15}
       >
         <Ionicons name="settings-outline" size={28} color="white" />
       </Pressable>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     top: spacing.lg * 1.5,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: spacing.lg,
   },
   streakText: {
     color: "white",

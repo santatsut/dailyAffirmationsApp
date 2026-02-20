@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/inkFlow.png",
-    "scheme": "dailyaffirmations",
+    "scheme": "dailyverse",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
@@ -22,7 +22,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.DailyVerse"
     },
-    "platforms": ["android"],
+    "platforms": ["android", "web"],
     "web": {
       "output": "static",
       "favicon": "./assets/images/inkFlow.png"
@@ -46,6 +46,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "0f118e2f-79ae-42ff-9648-f9de4a5f951b"
+      }
     }
   }
 }

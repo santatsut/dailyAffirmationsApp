@@ -80,13 +80,13 @@ export default function SaveScreen() {
     <View style={styles.container}>
       {/* Navbar */}
       <View style={styles.navBar}>
-        <Pressable onPress={() => router.push("./mainScreen")}>
+        <Pressable onPress={() => router.push("/mainScreen")}>
           <Ionicons name="brush" size={28} color="white" />
         </Pressable>
 
         <Text style={styles.title}>Saved</Text>
 
-        <Pressable onPress={() => router.push("./settingsScreen")}>
+        <Pressable onPress={() => router.push("/settingsScreen")}>
           <Ionicons name="settings-outline" size={28} color="white" />
         </Pressable>
       </View>

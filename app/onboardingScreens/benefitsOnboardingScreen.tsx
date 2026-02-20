@@ -7,7 +7,7 @@ export default function FourthOnboardingScreen() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("./dailyOnboardingScreen");
+    router.push("/onboardingScreens/dailyOnboardingScreen");
   };
 
   return (
