@@ -1,5 +1,4 @@
 export const colors = {
-
   /* Primary Colors */
   DeepPlum: "#2D1B2E", // primary background
   WarmTerracotta: "#D97757", // primary accent
@@ -28,6 +27,6 @@ export const fontSizes = {
   xl: 32,
 };
 export const fonts = {
-  playfair: "'Playfair Display', serif",
+  playfair: "serif",
   roboto: "'Roboto', sans-serif",
 };

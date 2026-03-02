@@ -12,67 +12,65 @@ export default function FourthOnboardingScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>The benefits of daily affirmations!</Text>
+      <Text style={styles.titleText}>Why Learn Idioms?</Text>
+
       <Image
         style={styles.logo}
         source={require("../../assets/images/inkFlow.png")}
-        alt="icon"
+        alt="idiom icon"
       />
 
-      <View style={styles.reduceStressBox}>
+      <View style={styles.featureBox}>
         <View style={styles.icon}>
-          <Text style={{ fontSize: 28 }}>🧘‍♂️</Text>
+          <Text style={{ fontSize: 28 }}>📖</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Reduce Stress</Text>
+          <Text style={styles.title}>Learn Chinese Idioms</Text>
           <Text style={styles.subtitle}>
-            Mindful moments throughout your day helps you stay grounded and
-            manage anxiety better.
+            Swipe through beautifully designed idiom cards with hanzi, pinyin,
+            and meaning.
           </Text>
         </View>
       </View>
 
-      <View style={styles.reduceStressBox}>
+      <View style={styles.featureBox}>
         <View style={styles.icon}>
-          <Text style={{ fontSize: 28 }}>🌞</Text>
-          {/* for Increase Positivity */}
+          <Text style={{ fontSize: 28 }}>📌</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Increase Positivity</Text>
+          <Text style={styles.title}>Save Favorites</Text>
           <Text style={styles.subtitle}>
-            Daily affirmations can help rewire your brain to focus on the
-            positive aspects of life.
+            Bookmark idioms you love to revisit later.
           </Text>
         </View>
       </View>
 
-      <View style={styles.reduceStressBox}>
+      <View style={styles.featureBox}>
         <View style={styles.icon}>
-          <Text style={{ fontSize: 28 }}>🎯</Text>
+          <Text style={{ fontSize: 28 }}>🔥</Text>
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Achieving your Goals</Text>
+          <Text style={styles.title}>Track Your Streak</Text>
           <Text style={styles.subtitle}>
-            Regular and positive self-talk can enhance your self-esteem, overall
-            confidence and performance.
+            Stay motivated by keeping a daily learning streak and see your
+            progress grow.
           </Text>
         </View>
       </View>
 
       <Pressable style={styles.button} onPress={handleNext}>
-        <Text onPress={handleNext} style={styles.buttonText}>
-          Next
-        </Text>
+        <Text style={styles.buttonText}>Next</Text>
       </Pressable>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.DeepPlum,
     paddingHorizontal: spacing.lg,
-    justifyContent: "space-between", // spread title, content, button vertically
+    justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: spacing.lg,
   },
@@ -85,7 +83,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: spacing.lg,
   },
-  reduceStressBox: {
+  featureBox: {
     backgroundColor: "rgba(255, 255, 255, 0.08)",
     padding: spacing.md,
     borderRadius: 16,

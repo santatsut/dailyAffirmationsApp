@@ -1,0 +1,61 @@
+export const chineseIdioms = [
+  { id: "ci1", hanzi: "一心一意", pinyin: "yī xīn yī yì", meaning: "wholeheartedly" },
+  { id: "ci2", hanzi: "半途而废", pinyin: "bàn tú ér fèi", meaning: "give up halfway" },
+  { id: "ci3", hanzi: "马马虎虎", pinyin: "mǎ mǎ hū hū", meaning: "so-so / careless" },
+  { id: "ci4", hanzi: "画蛇添足", pinyin: "huà shé tiān zú", meaning: "ruin something by overdoing it" },
+  { id: "ci5", hanzi: "对牛弹琴", pinyin: "duì niú tán qín", meaning: "address the wrong audience" },
+
+  { id: "ci6", hanzi: "从容不迫", pinyin: "cóng róng bù pò", meaning: "calm and unhurried" },
+  { id: "ci7", hanzi: "井井有条", pinyin: "jǐng jǐng yǒu tiáo", meaning: "well-organized" },
+  { id: "ci8", hanzi: "全力以赴", pinyin: "quán lì yǐ fù", meaning: "go all out" },
+  { id: "ci9", hanzi: "自言自语", pinyin: "zì yán zì yǔ", meaning: "talk to oneself" },
+  { id: "ci10", hanzi: "无忧无虑", pinyin: "wú yōu wú lǜ", meaning: "carefree" },
+
+  { id: "ci11", hanzi: "心平气和", pinyin: "xīn píng qì hé", meaning: "calm and peaceful" },
+  { id: "ci12", hanzi: "理所当然", pinyin: "lǐ suǒ dāng rán", meaning: "only natural / as it should be" },
+  { id: "ci13", hanzi: "不可思议", pinyin: "bù kě sī yì", meaning: "unbelievable" },
+  { id: "ci14", hanzi: "一模一样", pinyin: "yī mú yī yàng", meaning: "exactly the same" },
+  { id: "ci15", hanzi: "大惊小怪", pinyin: "dà jīng xiǎo guài", meaning: "make a fuss over nothing" },
+
+  { id: "ci16", hanzi: "顺其自然", pinyin: "shùn qí zì rán", meaning: "let it be / go with the flow" },
+  { id: "ci17", hanzi: "自作自受", pinyin: "zì zuò zì shòu", meaning: "reap what one sows" },
+  { id: "ci18", hanzi: "后知后觉", pinyin: "hòu zhī hòu jué", meaning: "slow to realize" },
+  { id: "ci19", hanzi: "心满意足", pinyin: "xīn mǎn yì zú", meaning: "fully satisfied" },
+  { id: "ci20", hanzi: "无可奈何", pinyin: "wú kě nài hé", meaning: "have no choice" },
+
+  { id: "ci21", hanzi: "轻而易举", pinyin: "qīng ér yì jǔ", meaning: "easily" },
+  { id: "ci22", hanzi: "一举两得", pinyin: "yī jǔ liǎng dé", meaning: "kill two birds with one stone" },
+  { id: "ci23", hanzi: "迫不及待", pinyin: "pò bù jí dài", meaning: "can't wait" },
+  { id: "ci24", hanzi: "莫名其妙", pinyin: "mò míng qí miào", meaning: "baffling" },
+  { id: "ci25", hanzi: "心血来潮", pinyin: "xīn xuè lái cháo", meaning: "on a sudden impulse" },
+
+  { id: "ci26", hanzi: "随遇而安", pinyin: "suí yù ér ān", meaning: "adapt easily" },
+  { id: "ci27", hanzi: "不知所措", pinyin: "bù zhī suǒ cuò", meaning: "at a loss" },
+  { id: "ci28", hanzi: "犹豫不决", pinyin: "yóu yù bù jué", meaning: "indecisive" },
+  { id: "ci29", hanzi: "当机立断", pinyin: "dāng jī lì duàn", meaning: "make a quick decision" },
+  { id: "ci30", hanzi: "见多识广", pinyin: "jiàn duō shí guǎng", meaning: "experienced and knowledgeable" },
+
+  { id: "ci31", hanzi: "聚精会神", pinyin: "jù jīng huì shén", meaning: "concentrate fully" },
+  { id: "ci32", hanzi: "胡思乱想", pinyin: "hú sī luàn xiǎng", meaning: "let imagination run wild" },
+  { id: "ci33", hanzi: "筋疲力尽", pinyin: "jīn pí lì jìn", meaning: "exhausted" },
+  { id: "ci34", hanzi: "迫在眉睫", pinyin: "pò zài méi jié", meaning: "imminent / urgent" },
+  { id: "ci35", hanzi: "手忙脚乱", pinyin: "shǒu máng jiǎo luàn", meaning: "flustered" },
+
+  { id: "ci36", hanzi: "自信满满", pinyin: "zì xìn mǎn mǎn", meaning: "full of confidence" },
+  { id: "ci37", hanzi: "得意忘形", pinyin: "dé yì wàng xíng", meaning: "lose oneself in pride" },
+  { id: "ci38", hanzi: "无精打采", pinyin: "wú jīng dǎ cǎi", meaning: "listless" },
+  { id: "ci39", hanzi: "一本正经", pinyin: "yī běn zhèng jīng", meaning: "serious / solemn" },
+  { id: "ci40", hanzi: "一塌糊涂", pinyin: "yī tā hú tú", meaning: "a complete mess" },
+
+  { id: "ci41", hanzi: "不可避免", pinyin: "bù kě bì miǎn", meaning: "unavoidable" },
+  { id: "ci42", hanzi: "力不从心", pinyin: "lì bù cóng xīn", meaning: "the spirit is willing but the body isn't" },
+  { id: "ci43", hanzi: "恍然大悟", pinyin: "huǎng rán dà wù", meaning: "suddenly realize" },
+  { id: "ci44", hanzi: "念念不忘", pinyin: "niàn niàn bù wàng", meaning: "cannot forget" },
+  { id: "ci45", hanzi: "习以为常", pinyin: "xí yǐ wéi cháng", meaning: "accustomed to" },
+
+  { id: "ci46", hanzi: "心急如焚", pinyin: "xīn jí rú fén", meaning: "extremely anxious" },
+  { id: "ci47", hanzi: "哭笑不得", pinyin: "kū xiào bù dé", meaning: "not know whether to laugh or cry" },
+  { id: "ci48", hanzi: "精益求精", pinyin: "jīng yì qiú jīng", meaning: "strive for perfection" },
+  { id: "ci49", hanzi: "事半功倍", pinyin: "shì bàn gōng bèi", meaning: "half the effort, double the result" },
+  { id: "ci50", hanzi: "小心翼翼", pinyin: "xiǎo xīn yì yì", meaning: "extremely careful" },
+]

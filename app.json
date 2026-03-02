@@ -1,38 +1,37 @@
 {
   "expo": {
-    "name": "DailyVerse",
-    "slug": "Daily-Verse",
+    "name": "IdiomBuddy",
+    "slug": "IdiomBuddy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/inkFlow.png",
-    "scheme": "dailyverse",
+    "icon": "./assets/images/IdiomBuddy.png",
+    "scheme": "idiombuddy",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/inkFlow.png",
-        "backgroundImage": "./assets/images/inkFlow.png",
-        "monochromeImage": "./assets/images/inkFlow.png"
+        "foregroundImage": "./assets/images/IdiomBuddy.png",
+        "backgroundImage": "./assets/images/IdiomBuddy.png",
+        "monochromeImage": "./assets/images/IdiomBuddy.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.DailyVerse"
+      "package": "com.anonymous.IdiomBuddy",
+      "permissions": ["VIBRATE"]
     },
     "platforms": ["android", "web"],
     "web": {
       "output": "static",
-      "favicon": "./assets/images/inkFlow.png"
+      "favicon": "./assets/images/IdiomBuddy.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/inkFlow.png",
+          "image": "./assets/images/IdiomBuddy.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

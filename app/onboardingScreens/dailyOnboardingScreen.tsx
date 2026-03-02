@@ -1,3 +1,6 @@
+import { scheduleDailyNotification } from "@/components/notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -10,13 +13,33 @@ export default function FifthOnboardingScreen() {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const currentDay = "Wed"; // This is the day that will "light up"
 
-  const handleNext = () => {
-    router.push("/onboardingScreens/categoriesOnboardingScreen");
+  async function handleNext() {
+        // for notification permission
+    async function requestNotificationPermission() {
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== "granted") {
+        const { status: newStatus } =
+          await Notifications.requestPermissionsAsync();
+        return newStatus === "granted";
+      }
+      return true;
+    }
+  
+const granted = await requestNotificationPermission();
+
+if (granted) {
+  await scheduleDailyNotification(9, 0);
+}
+
+await AsyncStorage.setItem("hasCompletedOnboarding", "true");
+router.replace("/mainScreen");
   };
+
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Build your daily affirmation habits!</Text>
+      <Text style={styles.title}>Daily Chinese idioms!</Text>
 
       <View style={styles.streakBox}>
         <View style={styles.daysRow}>
@@ -46,7 +69,7 @@ export default function FifthOnboardingScreen() {
           { fontSize: fontSizes.sm, marginTop: spacing.md },
         ]}
       >
-        Consistency is key to healing and personal growth.
+        Consistency is key to learning.
       </Text>
       <Pressable style={styles.button} onPress={handleNext}>
         <Text style={styles.buttonText}>Next</Text>

@@ -1,80 +1,41 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { AffirmationItem } from "../data/dataTypes";
+import { IdiomItem } from "../data/dataTypes";
 import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
 export default function SaveScreen() {
   const router = useRouter();
-  const [savedAffirmations, setSavedAffirmations] = React.useState<
-    AffirmationItem[]
-  >([]);
-  const [filtering, setFiltering] = React.useState<
-    "none" | "m" | "s" | "r" | "h" | "zh" | "eng"
-  >("none");
+  const [savedIdioms, setSavedIdioms] = useState<IdiomItem[]>([]);
+  const [filterZH, setFilterZH] = useState(false);
 
-  React.useEffect(() => {
-    const loadSavedAffirmations = async () => {
+  useEffect(() => {
+    const loadSavedIdioms = async () => {
       try {
-        const savedData = await AsyncStorage.getItem("savedAffirmations");
-        if (savedData) {
-          setSavedAffirmations(JSON.parse(savedData));
-        }
+        const savedData = await AsyncStorage.getItem("savedIdioms");
+        if (savedData) setSavedIdioms(JSON.parse(savedData));
       } catch (error) {
-        console.error("Error loading saved affirmations:", error);
+        console.error("Error loading saved idioms:", error);
       }
-      console.log("Loaded saved affirmations:", savedAffirmations);
     };
-    loadSavedAffirmations();
+    loadSavedIdioms();
   }, []);
 
   const handleRemove = async (id: string) => {
     try {
-      const updated = savedAffirmations.filter((item) => item.id !== id);
-      setSavedAffirmations(updated); // update UI immediately
-      await AsyncStorage.setItem("savedAffirmations", JSON.stringify(updated)); // persist
-      console.log("Removed affirmation:", id);
+      const updated = savedIdioms.filter((item) => item.id !== id);
+      setSavedIdioms(updated);
+      await AsyncStorage.setItem("savedIdioms", JSON.stringify(updated));
     } catch (error) {
-      console.error("Error removing affirmation:", error);
+      console.error("Error removing idiom:", error);
     }
   };
 
-  const filteredAffirmations = savedAffirmations.filter((item) => {
-    if (filtering === "none") return true;
-
-    // Language filters
-    if (filtering === "zh") return "hanzi" in item;
-    if (filtering === "eng") return "text" in item;
-
-    // Category filters (based on id prefix)
-    return item.id.startsWith(filtering);
-  });
-
-  const FILTERS = [
-    { id: "zh", label: "中文" },
-    { id: "eng", label: "English" },
-    { id: "m", label: "Motivation" },
-    { id: "s", label: "Self Love" },
-    { id: "r", label: "Relationships" },
-    { id: "h", label: "Heartbreak" },
-  ];
-
-  const renderFilter = ({ item }: { item: { id: string; label: string } }) => {
-    const active = filtering === item.id;
-
-    return (
-      <Pressable
-        style={[styles.tabText, active && styles.activeTab]}
-        onPress={() => setFiltering(active ? "none" : (item.id as any))}
-      >
-        <Text style={{ color: active ? "white" : colors.DeepPlum }}>
-          {item.label}
-        </Text>
-      </Pressable>
-    );
-  };
+  const filteredIdioms = filterZH
+    ? savedIdioms.filter((item) => "hanzi" in item)
+    : savedIdioms;
 
   return (
     <View style={styles.container}>
@@ -93,48 +54,26 @@ export default function SaveScreen() {
 
       {/* Info */}
       <Text style={styles.introText}>
-        Saved quotes and user information will go here.
+        {savedIdioms.length > 0
+          ? "Your saved idioms:"
+          : "You haven’t saved any idioms yet."}
       </Text>
-      <Text style={styles.subText}>
-        {savedAffirmations.length} saved affirmations
-      </Text>
+      <Text style={styles.subText}>{savedIdioms.length} saved idioms</Text>
 
-      {/* Filters */}
+      {/* Idioms List */}
       <FlatList
-        data={FILTERS}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={renderFilter}
-        style={{ width: "100%" }}
-        contentContainerStyle={{
-          alignItems: "center",
-          marginTop: spacing.md,
-          marginBottom: spacing.lg * 2,
-        }}
-      />
-
-      {/* Affirmations */}
-      <FlatList
-        data={filteredAffirmations}
+        data={filteredIdioms}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{
           alignItems: "center",
-          width: "100%",
+          paddingVertical: spacing.md,
         }}
         renderItem={({ item }) => (
-          <View style={styles.affirmationItem}>
-            {"hanzi" in item ? (
-              <>
-                <Text style={styles.affirmationText}>{item.hanzi}</Text>
-                <Text style={styles.affirmationText}>{item.pinyin}</Text>
-                <Text style={styles.affirmationText}>{item.meaning}</Text>
-              </>
-            ) : (
-              <Text style={styles.affirmationText}>{item.text}</Text>
-            )}
+          <View style={styles.idiomItem}>
+            <Text style={styles.hanzi}>{item.hanzi}</Text>
+            <Text style={styles.pinyin}>{item.pinyin}</Text>
+            <Text style={styles.meaning}>{item.meaning}</Text>
 
-            {/* Remove button */}
             <Pressable
               onPress={() => handleRemove(item.id)}
               style={styles.removeButton}
@@ -187,41 +126,52 @@ const styles = StyleSheet.create({
     color: colors.SoftCoral,
     fontSize: fontSizes.md,
     fontFamily: fonts.roboto,
-    marginBottom: 32,
+    marginBottom: spacing.md,
     textAlign: "center",
   },
-  tabText: {
+
+  filterButton: {
     backgroundColor: colors.WarmCream,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: 14,
-    marginRight: spacing.sm,
-    minHeight: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.15)",
+    marginBottom: spacing.lg,
   },
-
-  activeTab: {
+  activeFilter: {
     backgroundColor: colors.SoftCoral,
   },
-  affirmationItem: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
+
+  idiomItem: {
+    backgroundColor: "rgba(255,255,255,0.1)",
     padding: spacing.md,
     borderRadius: 16,
     marginBottom: spacing.lg,
-    width: 350, // full width of parent (FlatList content)
-    minWidth: 200, // caps width so it doesn’t stretch too wide on tablets
+    width: 350,
+    minWidth: 200,
+    alignItems: "center",
   },
 
-  affirmationText: {
+  hanzi: {
     color: colors.WarmCream,
+    fontSize: fontSizes.lg + 2,
+    fontFamily: fonts.playfair,
+    textAlign: "center",
+    marginBottom: spacing.sm / 2,
+  },
+  pinyin: {
+    color: colors.WarmCream,
+    fontSize: fontSizes.md,
+    fontFamily: fonts.roboto,
+    textAlign: "center",
+    marginBottom: spacing.sm / 2,
+  },
+  meaning: {
+    color: colors.SoftCoral,
     fontSize: fontSizes.sm + 1,
     fontFamily: fonts.roboto,
     textAlign: "center",
-    lineHeight: 22,
   },
+
   removeButton: {
     position: "absolute",
     top: 10,

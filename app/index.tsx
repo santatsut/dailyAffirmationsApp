@@ -18,7 +18,7 @@ export default function Home() {
     if (setupProcessed) {
       router.replace("/mainScreen");
     } else {
-      router.replace("/onboardingScreens/languageOnboardingScreen");
+      router.replace("/onboardingScreens/benefitsOnboardingScreen");
     }
   };
 

@@ -1,7 +1,13 @@
 import { Stack } from "expo-router";
+import React from "react";
+import { setupNotifications } from "../components/notifications";
 import { colors, fonts } from "../styles/theme";
 
 export default function RootLayout() {
+  React.useEffect(() => {
+    setupNotifications();
+  }, []);
+
   return (
     <Stack
       screenOptions={{
