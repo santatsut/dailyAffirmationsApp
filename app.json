@@ -1,37 +1,42 @@
 {
   "expo": {
-    "name": "IdiomBuddy",
-    "slug": "IdiomBuddy",
+    "name": "ChengyuScroll",
+    "slug": "Daily-Verse",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/IdiomBuddy.png",
-    "scheme": "idiombuddy",
+    "icon": "./assets/images/ChengyuScroll.png",
+    "scheme": "dailyverse",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/IdiomBuddy.png",
-        "backgroundImage": "./assets/images/IdiomBuddy.png",
-        "monochromeImage": "./assets/images/IdiomBuddy.png"
+        "foregroundImage": "./assets/images/ChengyuScroll.png",
+        "backgroundImage": "./assets/images/ChengyuScroll.png",
+        "monochromeImage": "./assets/images/ChengyuScroll.png"
       },
+      "permissions": ["VIBRATE"],
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.IdiomBuddy",
-      "permissions": ["VIBRATE"]
+      "package": "com.SerenSoul.ChengyuScroll",
+      "versionCode": 1
     },
-    "platforms": ["android", "web"],
+    "platforms": [
+      "android",
+      "web"
+    ],
     "web": {
       "output": "static",
-      "favicon": "./assets/images/IdiomBuddy.png"
+      "favicon": "./assets/images/ChengyuScroll.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/IdiomBuddy.png",
+          "image": "./assets/images/ChengyuScroll.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -51,6 +56,7 @@
       "eas": {
         "projectId": "0f118e2f-79ae-42ff-9648-f9de4a5f951b"
       }
-    }
+    },
+    "owner": "serensoul"
   }
 }

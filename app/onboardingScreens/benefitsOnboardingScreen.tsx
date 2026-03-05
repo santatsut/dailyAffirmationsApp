@@ -16,7 +16,7 @@ export default function FourthOnboardingScreen() {
 
       <Image
         style={styles.logo}
-        source={require("../../assets/images/inkFlow.png")}
+        source={require("../../assets/images/ChengyuScroll.png")}
         alt="idiom icon"
       />
 
