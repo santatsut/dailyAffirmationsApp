@@ -12,7 +12,7 @@ export default function Home() {
 
   const handleOnboardingStart = () => {
     if (setupProcessed === null) {
-      return null; // or a loading spinner
+      return null;
     }
 
     if (setupProcessed) {
@@ -42,8 +42,8 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.introText}>Daily Verse</Text>
-      <Text style={styles.subText}>This is the first step to healing!</Text>
+      <Text style={styles.introText}>Chengyu Scroll</Text>
+      <Text style={styles.subText}>Easy way to get better at chinese!</Text>
 
       {/* Modern way to navigate to /main */}
       <Pressable

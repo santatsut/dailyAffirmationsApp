@@ -27,17 +27,38 @@ export default function MainScreen() {
     return chineseIdioms[Math.floor(Math.random() * chineseIdioms.length)];
   }, []);
 
-  const nextIdiom = React.useCallback(() => {
+  const nextIdiom = React.useCallback(async () => {
     if (!chineseIdioms.length) return;
 
-    let newItem = getRandomIdiom();
+    const savedData = await AsyncStorage.getItem("savedIdioms");
+    const saved: IdiomItem[] = savedData ? JSON.parse(savedData) : [];
 
-    while (idiom && newItem.id === idiom.id) {
-      newItem = getRandomIdiom();
+    const savedIds = saved.map((item) => item.id);
+
+    const unsaved = chineseIdioms.filter((item) => !savedIds.includes(item.id));
+    const savedOnly = chineseIdioms.filter((item) =>
+      savedIds.includes(item.id),
+    );
+
+    let newItem: IdiomItem;
+
+    if (unsaved.length > 0) {
+      // 70% chance to pick from unsaved
+      newItem =
+        Math.random() < 0.7
+          ? unsaved[Math.floor(Math.random() * unsaved.length)]
+          : savedOnly[Math.floor(Math.random() * savedOnly.length)];
+    } else {
+      newItem = savedOnly[Math.floor(Math.random() * savedOnly.length)];
+    }
+
+    // avoid repeating the same idiom
+    if (idiom && newItem.id === idiom.id) {
+      newItem = chineseIdioms[Math.floor(Math.random() * chineseIdioms.length)];
     }
 
     setIdiom(newItem);
-  }, [idiom, getRandomIdiom]);
+  }, [idiom]);
 
   // for swipe detection for next Idiom
   const panResponder = React.useMemo(
@@ -64,8 +85,8 @@ export default function MainScreen() {
                 duration: 300,
                 useNativeDriver: true,
               }),
-            ]).start(() => {
-              nextIdiom();
+            ]).start(async () => {
+              await nextIdiom();
 
               translateY.setValue(600);
               opacity.setValue(0);
@@ -109,7 +130,6 @@ export default function MainScreen() {
 
       setIsSaved(saved.some((item) => item.id === idiom.id));
     };
-
     checkSaved();
   }, [idiom]);
 
