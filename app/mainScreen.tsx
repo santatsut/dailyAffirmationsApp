@@ -21,40 +21,33 @@ export default function MainScreen() {
   const translateY = React.useRef(new Animated.Value(0)).current;
   const opacity = React.useRef(new Animated.Value(1)).current;
 
-  // Getting random Idiom
-  const getRandomIdiom = React.useCallback((): IdiomItem => {
-    if (!chineseIdioms.length) throw new Error("No idioms available");
-    return chineseIdioms[Math.floor(Math.random() * chineseIdioms.length)];
-  }, []);
-
   const nextIdiom = React.useCallback(async () => {
     if (!chineseIdioms.length) return;
 
     const savedData = await AsyncStorage.getItem("savedIdioms");
     const saved: IdiomItem[] = savedData ? JSON.parse(savedData) : [];
 
-    const savedIds = saved.map((item) => item.id);
+    const savedIds = new Set(saved.map((item) => item.id));
 
-    const unsaved = chineseIdioms.filter((item) => !savedIds.includes(item.id));
-    const savedOnly = chineseIdioms.filter((item) =>
-      savedIds.includes(item.id),
-    );
+    const unsaved = chineseIdioms.filter((item) => !savedIds.has(item.id));
+    const savedOnly = chineseIdioms.filter((item) => savedIds.has(item.id));
 
-    let newItem: IdiomItem;
+    let pool: IdiomItem[];
 
+    // Prefer unsaved idioms
     if (unsaved.length > 0) {
-      // 70% chance to pick from unsaved
-      newItem =
-        Math.random() < 0.7
-          ? unsaved[Math.floor(Math.random() * unsaved.length)]
-          : savedOnly[Math.floor(Math.random() * savedOnly.length)];
+      pool =
+        Math.random() < 0.8 ? unsaved : savedOnly.length ? savedOnly : unsaved;
     } else {
-      newItem = savedOnly[Math.floor(Math.random() * savedOnly.length)];
+      pool = savedOnly;
     }
 
-    // avoid repeating the same idiom
-    if (idiom && newItem.id === idiom.id) {
-      newItem = chineseIdioms[Math.floor(Math.random() * chineseIdioms.length)];
+    let newItem = pool[Math.floor(Math.random() * pool.length)];
+
+    // Avoid repeating the same idiom
+    if (idiom && newItem.id === idiom.id && pool.length > 1) {
+      const filtered = pool.filter((item) => item.id !== idiom.id);
+      newItem = filtered[Math.floor(Math.random() * filtered.length)];
     }
 
     setIdiom(newItem);
@@ -119,7 +112,7 @@ export default function MainScreen() {
 
   React.useEffect(() => {
     nextIdiom();
-  }, []);
+  }, [nextIdiom]);
 
   // on every idiom it checks if it is saved
   React.useEffect(() => {
