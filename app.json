@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "ChengyuScroll",
+    "name": "Chengyu Scroll",
     "slug": "Daily-Verse",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#2D1B2E",
         "foregroundImage": "./assets/images/ChengyuScroll.png",
         "backgroundImage": "./assets/images/ChengyuScroll.png",
         "monochromeImage": "./assets/images/ChengyuScroll.png"
@@ -23,10 +23,7 @@
       "package": "com.SerenSoul.ChengyuScroll",
       "versionCode": 1
     },
-    "platforms": [
-      "android",
-      "web"
-    ],
+    "platforms": ["android", "web"],
     "web": {
       "output": "static",
       "favicon": "./assets/images/ChengyuScroll.png"
@@ -39,9 +36,9 @@
           "image": "./assets/images/ChengyuScroll.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#2D1B2E",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#2D1B2E"
           }
         }
       ],

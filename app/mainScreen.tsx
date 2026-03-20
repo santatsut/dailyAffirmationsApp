@@ -17,42 +17,69 @@ import { colors, fonts, spacing } from "../styles/theme";
 export default function MainScreen() {
   const [idiom, setIdiom] = React.useState<IdiomItem | null>(null);
   const [isSaved, setIsSaved] = React.useState(false);
+  const [todayCount, setTodayCount] = React.useState(0);
 
   const translateY = React.useRef(new Animated.Value(0)).current;
   const opacity = React.useRef(new Animated.Value(1)).current;
 
-  const nextIdiom = React.useCallback(async () => {
-    if (!chineseIdioms.length) return;
+  const [queue, setQueue] = React.useState<IdiomItem[]>([]);
+  const [index, setIndex] = React.useState(0);
 
-    const savedData = await AsyncStorage.getItem("savedIdioms");
-    const saved: IdiomItem[] = savedData ? JSON.parse(savedData) : [];
+  function shuffle(array: IdiomItem[]) {
+    return [...array].sort(() => Math.random() - 0.5);
+  }
 
-    const savedIds = new Set(saved.map((item) => item.id));
+  React.useEffect(() => {
+    const initQueue = async () => {
+      const savedData = await AsyncStorage.getItem("savedIdioms");
+      const saved: IdiomItem[] = savedData ? JSON.parse(savedData) : [];
 
-    const unsaved = chineseIdioms.filter((item) => !savedIds.has(item.id));
-    const savedOnly = chineseIdioms.filter((item) => savedIds.has(item.id));
+      const savedIds = new Set(saved.map((i) => i.id));
 
-    let pool: IdiomItem[];
+      // ONLY unsaved for main flow
+      const unsaved = chineseIdioms.filter((i) => !savedIds.has(i.id));
 
-    // Prefer unsaved idioms
-    if (unsaved.length > 0) {
-      pool =
-        Math.random() < 0.8 ? unsaved : savedOnly.length ? savedOnly : unsaved;
-    } else {
-      pool = savedOnly;
+      const shuffled = shuffle(unsaved);
+      setQueue(shuffled);
+
+      setIndex(0);
+      setIdiom(shuffled[0]);
+    };
+
+    initQueue();
+  }, []);
+
+  const [recent, setRecent] = React.useState<string[]>([]);
+
+  const nextIdiom = async () => {
+    if (queue.length === 0) return;
+
+    // 👇 FILTER OUT RECENTLY SHOWN
+    let available = queue.filter((i) => !recent.includes(i.id));
+
+    // 👇 fallback if everything is filtered out
+    if (available.length === 0) {
+      available = queue;
+      setRecent([]); // reset history
     }
 
-    let newItem = pool[Math.floor(Math.random() * pool.length)];
+    // 👇 pick next (you can keep using index OR random here)
+    const nextItem = available[0]; // or random if you prefer
 
-    // Avoid repeating the same idiom
-    if (idiom && newItem.id === idiom.id && pool.length > 1) {
-      const filtered = pool.filter((item) => item.id !== idiom.id);
-      newItem = filtered[Math.floor(Math.random() * filtered.length)];
-    }
+    setIdiom(nextItem);
 
-    setIdiom(newItem);
-  }, [idiom]);
+    // 👇 update recent history (keep last 20)
+    setRecent((prev) => {
+      const updated = [...prev, nextItem.id];
+      return updated.length > 20 ? updated.slice(-20) : updated;
+    });
 
+    setTodayCount((prev) => {
+      const newCount = prev + 1;
+      AsyncStorage.setItem("todayCount", String(newCount));
+      return newCount;
+    });
+  };
   // for swipe detection for next Idiom
   const panResponder = React.useMemo(
     () =>
@@ -69,7 +96,7 @@ export default function MainScreen() {
           if (gesture.dy < -80) {
             Animated.parallel([
               Animated.timing(translateY, {
-                toValue: -600,
+                toValue: -400,
                 duration: 300,
                 useNativeDriver: true,
               }),
@@ -109,7 +136,6 @@ export default function MainScreen() {
   );
 
   // onload it loads the first idiom immediately
-
   React.useEffect(() => {
     nextIdiom();
   }, [nextIdiom]);
@@ -125,6 +151,15 @@ export default function MainScreen() {
     };
     checkSaved();
   }, [idiom]);
+
+  React.useEffect(() => {
+    const loadCount = async () => {
+      const stored = await AsyncStorage.getItem("todayCount");
+      if (stored) setTodayCount(Number(stored));
+    };
+
+    loadCount();
+  }, [nextIdiom]);
 
   //handles saving an idiom
   const handleSave = async () => {
@@ -150,6 +185,7 @@ export default function MainScreen() {
   return (
     <View style={styles.container} pointerEvents="box-none">
       <Navbar />
+      <Text style={styles.progress}>{todayCount} idioms today</Text>
 
       <View style={styles.content}>
         <Animated.View
@@ -190,6 +226,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.DeepPlum,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  progress: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "light",
+    fontFamily: "serif",
+    marginTop: spacing.md,
+    fontStyle: "italic",
   },
 
   content: {

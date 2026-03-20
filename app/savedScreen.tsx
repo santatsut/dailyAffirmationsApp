@@ -1,41 +1,39 @@
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { IdiomItem } from "../data/dataTypes";
 import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
+
+import { LayoutAnimation } from "react-native";
+
 export default function SaveScreen() {
   const router = useRouter();
   const [savedIdioms, setSavedIdioms] = useState<IdiomItem[]>([]);
-  const [filterZH, setFilterZH] = useState(false);
+  const sorted = [...savedIdioms].reverse();
 
-  useEffect(() => {
-    const loadSavedIdioms = async () => {
-      try {
+  useFocusEffect(
+    useCallback(() => {
+      const loadSavedIdioms = async () => {
         const savedData = await AsyncStorage.getItem("savedIdioms");
         if (savedData) setSavedIdioms(JSON.parse(savedData));
-      } catch (error) {
-        console.error("Error loading saved idioms:", error);
-      }
-    };
-    loadSavedIdioms();
-  }, []);
+      };
+
+      loadSavedIdioms();
+    }, []),
+  );
 
   const handleRemove = async (id: string) => {
-    try {
-      const updated = savedIdioms.filter((item) => item.id !== id);
-      setSavedIdioms(updated);
-      await AsyncStorage.setItem("savedIdioms", JSON.stringify(updated));
-    } catch (error) {
-      console.error("Error removing idiom:", error);
-    }
-  };
+    LayoutAnimation.easeInEaseOut();
 
-  const filteredIdioms = filterZH
-    ? savedIdioms.filter((item) => "hanzi" in item)
-    : savedIdioms;
+    const updated = savedIdioms.filter((item) => item.id !== id);
+    setSavedIdioms(updated);
+    await AsyncStorage.setItem("savedIdioms", JSON.stringify(updated));
+  };
 
   return (
     <View style={styles.container}>
@@ -53,16 +51,24 @@ export default function SaveScreen() {
       </View>
 
       {/* Info */}
-      <Text style={styles.introText}>
-        {savedIdioms.length > 0
-          ? "Your saved idioms:"
-          : "You haven’t saved any idioms yet."}
-      </Text>
+      <View style={{ alignItems: "center" }}>
+        {savedIdioms.length > 0 ? (
+          <Text style={styles.introText}>Your saved idioms:</Text>
+        ) : (
+          <>
+            <Text style={styles.introText}>No saved idioms yet</Text>
+            <Text style={styles.subText}>
+              Tap the bookmark icon to save your favorites ✨
+            </Text>
+          </>
+        )}
+      </View>
+
       <Text style={styles.subText}>{savedIdioms.length} saved idioms</Text>
 
       {/* Idioms List */}
       <FlatList
-        data={filteredIdioms}
+        data={sorted}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{
           alignItems: "center",
@@ -142,13 +148,11 @@ const styles = StyleSheet.create({
   },
 
   idiomItem: {
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(255,255,255,0.08)",
     padding: spacing.md,
-    borderRadius: 16,
+    borderRadius: 20,
     marginBottom: spacing.lg,
-    width: 350,
-    minWidth: 200,
-    alignItems: "center",
+    width: "90%",
   },
 
   hanzi: {

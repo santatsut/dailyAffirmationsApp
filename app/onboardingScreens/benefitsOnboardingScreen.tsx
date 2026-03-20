@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fonts, fontSizes, spacing } from "../../styles/theme";
 
 export default function FourthOnboardingScreen() {
@@ -13,12 +13,6 @@ export default function FourthOnboardingScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.titleText}>Why Learn Idioms?</Text>
-
-      <Image
-        style={styles.logo}
-        source={require("../../assets/images/ChengyuScroll.png")}
-        alt="idiom icon"
-      />
 
       <View style={styles.featureBox}>
         <View style={styles.icon}>
