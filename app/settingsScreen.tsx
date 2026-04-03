@@ -2,7 +2,14 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Alert, Linking, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
 export default function SettingsScreen() {
@@ -26,7 +33,7 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.navBar}>
-        <Pressable onPress={() => router.replace("/mainScreen")}>
+        <Pressable onPress={() => router.push("/mainScreen")}>
           <Ionicons name="arrow-back" size={26} color={colors.WarmCream} />
         </Pressable>
 
@@ -37,7 +44,7 @@ export default function SettingsScreen() {
 
       <Text style={styles.sectionTitle}>About</Text>
       <View style={styles.card}>
-        <Text style={styles.appName}>Daily Idiom</Text>
+        <Text style={styles.appName}>Chengyu Scroll</Text>
 
         <Text style={styles.description}>
           Discover one meaningful Chinese idiom each day to inspire reflection,
@@ -52,23 +59,30 @@ export default function SettingsScreen() {
         <SettingsItem label="Privacy Policy" onPress={showPrivacyPolicy} />
         <Divider />
         <SettingsItem label="Terms of Service" onPress={showTerms} />
-              <Divider />
+        <Divider />
         <SettingsItem
           label="Contact Support"
           onPress={() => Linking.openURL("mailto:support@yourapp.com")}
-          />
-
-          </View>
-
+        />
+      </View>
     </View>
   );
 }
 
-function SettingsItem({ label, onPress }: { label: string; onPress: () => void }) {
+function SettingsItem({
+  label,
+  onPress,
+}: {
+  label: string;
+  onPress: () => void;
+}) {
   return (
-    <Pressable style={({ pressed }) => [styles.optionRow, pressed && { opacity: 0.6 }]} onPress={onPress}>
+    <Pressable
+      style={({ pressed }) => [styles.optionRow, pressed && { opacity: 0.6 }]}
+      onPress={onPress}
+    >
       <Text style={styles.optionText}>{label}</Text>
-      <Ionicons name="chevron-forward" size={20} color={colors.SoftCoral} />
+      <Ionicons name="chevron-forward" size={20} color={colors.WarmCream} />
     </Pressable>
   );
 }
@@ -80,19 +94,21 @@ function Divider() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.DeepPlum,
+    backgroundColor: colors.inkBlack,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg * 2,
   },
   navBar: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: spacing.lg * 2,
+    marginTop: spacing.sm * 2,
+    marginBottom: spacing.md,
   },
   title: { color: colors.WarmCream, fontSize: fontSizes.md, fontWeight: "600" },
   sectionTitle: {
-    color: colors.SoftCoral,
+    color: colors.WarmCream,
     fontSize: fontSizes.sm,
     textTransform: "uppercase",
     marginBottom: spacing.sm,
@@ -105,12 +121,27 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   version: {
-    color: colors.SoftCoral,
+    color: colors.WarmCream,
     fontSize: fontSizes.sm,
   },
-  appName: { color: colors.WarmCream, fontSize: fontSizes.lg, fontFamily: fonts.playfair, marginBottom: spacing.sm },
-  description: { color: colors.WarmCream, fontSize: fontSizes.sm, opacity: 0.8, lineHeight: 20 },
-  optionRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: spacing.md },
+  appName: {
+    color: colors.ImperialRed,
+    fontSize: fontSizes.lg,
+    fontFamily: fonts.playfair,
+    marginBottom: spacing.sm,
+  },
+  description: {
+    color: colors.WarmCream,
+    fontSize: fontSizes.sm,
+    opacity: 0.8,
+    lineHeight: 20,
+  },
+  optionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+  },
   optionText: { color: colors.WarmCream, fontSize: fontSizes.md },
   divider: { height: 1, backgroundColor: "rgba(255,255,255,0.08)" },
 });

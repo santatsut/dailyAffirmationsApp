@@ -2,7 +2,14 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { IdiomItem } from "../data/dataTypes";
 import { colors, fonts, fontSizes, spacing } from "../styles/theme";
 
@@ -10,6 +17,11 @@ import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 
 import { LayoutAnimation } from "react-native";
+
+const { width, height } = Dimensions.get("window");
+
+const CARD_WIDTH = width - spacing.lg * 2;
+const CARD_HEIGHT = height;
 
 export default function SaveScreen() {
   const router = useRouter();
@@ -37,23 +49,21 @@ export default function SaveScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Navbar */}
+      {/* Header */}
       <View style={styles.navBar}>
         <Pressable onPress={() => router.push("/mainScreen")}>
-          <Ionicons name="brush" size={28} color="white" />
+          <Ionicons name="arrow-back" size={26} color={colors.WarmCream} />
         </Pressable>
 
-        <Text style={styles.title}>Saved</Text>
+        <Text style={styles.title}>Collection</Text>
 
-        <Pressable onPress={() => router.push("/settingsScreen")}>
-          <Ionicons name="settings-outline" size={28} color="white" />
-        </Pressable>
+        <View style={{ width: 26 }} />
       </View>
 
       {/* Info */}
       <View style={{ alignItems: "center" }}>
         {savedIdioms.length > 0 ? (
-          <Text style={styles.introText}>Your saved idioms:</Text>
+          <Text style={styles.introText}>Your saved idioms ✨</Text>
         ) : (
           <>
             <Text style={styles.introText}>No saved idioms yet</Text>
@@ -74,6 +84,7 @@ export default function SaveScreen() {
           alignItems: "center",
           paddingVertical: spacing.md,
         }}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={styles.idiomItem}>
             <Text style={styles.hanzi}>{item.hanzi}</Text>
@@ -84,11 +95,7 @@ export default function SaveScreen() {
               onPress={() => handleRemove(item.id)}
               style={styles.removeButton}
             >
-              <Ionicons
-                name="trash-outline"
-                size={24}
-                color={colors.SoftCoral}
-              />
+              <Ionicons name="close" size={20} color={colors.WarmCream} />
             </Pressable>
           </View>
         )}
@@ -100,7 +107,7 @@ export default function SaveScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.DeepPlum,
+    backgroundColor: colors.inkBlack,
     padding: spacing.lg,
     alignItems: "center",
   },
@@ -129,7 +136,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   subText: {
-    color: colors.SoftCoral,
+    color: colors.WarmCream,
     fontSize: fontSizes.md,
     fontFamily: fonts.roboto,
     marginBottom: spacing.md,
@@ -143,45 +150,42 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginBottom: spacing.lg,
   },
-  activeFilter: {
-    backgroundColor: colors.SoftCoral,
-  },
-
   idiomItem: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-    padding: spacing.md,
-    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderRadius: 24,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.md,
     marginBottom: spacing.lg,
-    width: "90%",
+    width: CARD_WIDTH,
+    alignItems: "center",
   },
 
   hanzi: {
-    color: colors.WarmCream,
-    fontSize: fontSizes.lg + 2,
+    color: colors.ImperialRed,
+    fontSize: 44,
     fontFamily: fonts.playfair,
     textAlign: "center",
-    marginBottom: spacing.sm / 2,
-  },
-  pinyin: {
-    color: colors.WarmCream,
-    fontSize: fontSizes.md,
-    fontFamily: fonts.roboto,
-    textAlign: "center",
-    marginBottom: spacing.sm / 2,
-  },
-  meaning: {
-    color: colors.SoftCoral,
-    fontSize: fontSizes.sm + 1,
-    fontFamily: fonts.roboto,
-    textAlign: "center",
+    marginBottom: spacing.sm,
   },
 
+  pinyin: {
+    color: colors.slate, // softer
+    fontSize: fontSizes.md,
+    textAlign: "center",
+    marginBottom: spacing.xs,
+  },
+
+  meaning: {
+    color: colors.WarmCream,
+    fontSize: fontSizes.md + 1,
+    textAlign: "center",
+  },
   removeButton: {
     position: "absolute",
     top: 10,
     right: 10,
     padding: 8,
     borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(255,255,255,0.08)",
   },
 });

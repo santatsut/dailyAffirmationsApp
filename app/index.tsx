@@ -60,7 +60,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.DeepPlum,
+    backgroundColor: colors.inkBlack,
     padding: spacing.lg,
     justifyContent: "center",
     alignItems: "center",
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   subText: {
-    color: colors.SoftCoral,
+    color: colors.SoftGold,
     fontSize: fontSizes.md,
     fontFamily: fonts.roboto,
     marginBottom: 32,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     width: 250,
     alignSelf: "center",
     textAlign: "center",
-    backgroundColor: colors.WarmTerracotta,
+    backgroundColor: colors.SoftGold,
     color: colors.WarmCream,
     fontFamily: fonts.roboto,
     fontSize: 16,

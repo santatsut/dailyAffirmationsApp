@@ -78,7 +78,7 @@ export default function SecondOnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.DeepPlum,
+    backgroundColor: colors.inkBlack,
     padding: spacing.lg,
     justifyContent: "center",
     alignItems: "center",
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     maxWidth: 350,
   },
   selectedBox: {
-    borderColor: colors.SoftCoral,
+    borderColor: colors.WarmCream,
     backgroundColor: "rgba(217, 119, 87, 0.1)",
   },
   checkbox: {
@@ -118,13 +118,13 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: colors.SoftCoral,
+    borderColor: colors.WarmCream,
     justifyContent: "center",
     alignItems: "center",
     marginLeft: spacing.md,
   },
   checkboxChecked: {
-    backgroundColor: colors.SoftCoral,
+    backgroundColor: colors.WarmCream,
   },
   checkmark: {
     color: colors.WarmCream,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   selectedLabel: {
     fontWeight: "bold",
-    color: colors.SoftCoral,
+    color: colors.WarmCream,
   },
   buttonText: {
     color: colors.WarmCream,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 24,
     padding: spacing.md,
-    backgroundColor: colors.SoftCoral,
+    backgroundColor: colors.WarmCream,
     borderRadius: 24,
     width: "100%",
     alignItems: "center",

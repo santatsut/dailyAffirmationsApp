@@ -1,0 +1,1 @@
+# Fix auto-next idiom bug - COMPLETE\n\nChanges:\n- Memoized nextIdiom with useCallback([queue, recent])\n- Removed infinite useEffect(() => nextIdiom(), [nextIdiom])\n- Fixed loadCount useEffect deps to []\n\nApp ready to test: run `npx expo start --clear`\n\n✅ Bug fixed

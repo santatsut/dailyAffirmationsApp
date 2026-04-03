@@ -1,16 +1,16 @@
 export const colors = {
   /* Primary Colors */
-  DeepPlum: "#2D1B2E", // primary background
-  WarmTerracotta: "#D97757", // primary accent
-  SoftCoral: "#F4A89F", // secondary accent
+  inkBlack: "#1A1A1A", // primary background
 
-  // Supporting Colors
-  DustyRose: "#E8B4A8",
+  ImperialRed: "#C44536",
+
   Charcoal: "#3A3A3C",
   WarmCream: "#FFF5EE",
 
-  // Semantic Colors
-  SageGreen: "#A3B18A",
+  slate: "#bec4cc",
+  SoftGold: "#E6C07B",
+
+  JadeGreen: "#3FA796",
 };
 
 export const spacing = {
